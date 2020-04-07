@@ -6,6 +6,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import { ProductsToolbar, ProductCard } from './components';
 import mockData from './data';
+import { getFiles, getFileMetaData } from '../../shared/firebaseStorage';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,6 +24,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ProductList = () => {
+  getFiles()
+  .then(response => getFileMetaData(response));
   const classes = useStyles();
 
   const [products] = useState(mockData);
