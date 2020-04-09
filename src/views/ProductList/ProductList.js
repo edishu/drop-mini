@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, Grid, Typography } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import { ProductsToolbar, ProductCard } from './components';
-import mockData from './data';
-import { getFiles, getFileMetaData } from '../../shared/firebaseStorage';
+import { getFilesList, getMetaFileList } from '../../shared/firebaseStorage';
+import firebase from '../../config/firebase/firebaseInit';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,43 +19,60 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'center'
   }
 }));
 
 const ProductList = () => {
-  getFiles()
-  .then(response => getFileMetaData(response));
-  const classes = useStyles();
+  // State of ProductList component
+  const[filesList, setFilesList] = useState([]);
+  const [filesMetadataList, setFilesMetadataList] = useState([]);
 
-  const [products] = useState(mockData);
+  const getFilesListLocal = (files) => {
+    getFilesList(files)
+    .then(list => setFilesList(list))
+    .catch(err => console.log(err.message));
+  }
+  useEffect(() => {
+    getFilesListLocal("files");
+  }, []);
+  
+  useEffect(() => {
+    getMetaFileList(filesList)
+    .then(metaList => setFilesMetadataList(metaList))
+    .catch(err => console.log(err.message));
+  }, [filesList]);
+
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <ProductsToolbar />
+      <ProductsToolbar pageReload={() => getFilesListLocal("files")} />
       <div className={classes.content}>
         <Grid
           container
           spacing={3}
         >
-          {products.map(product => (
+          {filesMetadataList.map(product => (
             <Grid
               item
-              key={product.id}
+              key={product.md5Hash}
               lg={4}
               md={6}
               xs={12}
             >
-              <ProductCard product={product} />
+              <ProductCard 
+                product={product}
+                pageRefresh={() => getFilesListLocal("files")}/>
             </Grid>
           ))}
         </Grid>
       </div>
       <div className={classes.pagination}>
-        <Typography variant="caption">1-6 of 20</Typography>
         <IconButton>
           <ChevronLeftIcon />
         </IconButton>
+        <Typography variant="subtitle1">1-6 of 20</Typography>
         <IconButton>
           <ChevronRightIcon />
         </IconButton>

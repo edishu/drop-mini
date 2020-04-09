@@ -1,15 +1,20 @@
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 export const dateToStr = (date) => {
   let year = date.getFullYear().toString();
 
-  let month = (date.getMonth() + 1).toString();
-  month = month.length === 1 ? '0' + month : month;
-
+  let month = monthNames[date.getMonth()];
+  
   let day = date.getDate().toString();
   day = day.length === 1 ? '0' + day : day;
 
-  const fullDate = [year, month, day];
+  let hour = date.getHours();
+  let min = date.getMinutes();
+
+  const fullDate = [day, month, year];
   
-  return fullDate.join("-");
+  return `${fullDate.join(" ")} ${hour}:${min}`;
 }
 
 export const updateObject = (oldObject, updatedProperties) => {

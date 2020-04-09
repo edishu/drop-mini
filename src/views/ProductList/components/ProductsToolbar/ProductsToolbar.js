@@ -1,8 +1,8 @@
-import React from 'react';
+import React , {useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Button } from '@material-ui/core';
+import { Button, LinearProgress, Typography } from '@material-ui/core';
 
 import { SearchInput } from 'components';
 import { uploadFile } from '../../../../shared/firebaseStorage';
@@ -26,17 +26,30 @@ const useStyles = makeStyles(theme => ({
   },
   searchInput: {
     marginRight: theme.spacing(1)
-  }
+  },
+  progress: {
+    marginRight: theme.spacing(3),
+    width: 150
+  },
+  uploading: {
+    marginBottom: theme.spacing(0.5)
+  },
+  ifNotLoading: {
+    display: "none"
+  },
 }));
 
 const ProductsToolbar = props => {
-  const { className, ...rest } = props;
+  const [loading, setLoading] = useState(false);
+  const [loadValue, setLoadValue] = useState(0);
+
+  const { className } = props;
 
   const classes = useStyles();
 
   return (
     <div
-      {...rest}
+      // {...rest}
       className={clsx(classes.root, className)}
     >
       <div className={classes.row}>
@@ -45,10 +58,19 @@ const ProductsToolbar = props => {
           placeholder="Search File"
         />
         <span className={classes.spacer} />
+        <div className={clsx(classes.progress, (loading ? null : classes.ifNotLoading))}>
+          <Typography variant="body1" className={classes.uploading}>Uploading...</Typography>
+          <LinearProgress
+            value={loadValue}
+            variant="determinate"
+          />
+        </div>
         <Button color="primary" variant="contained" component="label">
             Upload
           <input type="file" style={{ display: "none" }} 
-            onChange={event => uploadFile(event)}/>
+            onChange={event => {
+              uploadFile(event, props.pageReload, setLoading, setLoadValue);
+              }}/>
         </Button>
       </div>
     </div>
