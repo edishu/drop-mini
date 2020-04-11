@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
@@ -11,8 +10,9 @@ import {
   Typography,
   Divider,
   Button,
-  LinearProgress
-} from '@material-ui/core';
+  } from '@material-ui/core';
+import {auth} from '../../../../shared/firebaseAuth';
+
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -35,17 +35,36 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AccountProfile = props => {
+
+  const [userDetails, setUserDetails] = useState([{
+    displayName: 'Dummy User',
+    email: 'dummy.user@email.com',
+    avatar: null
+  }]);
+
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+        auth.onAuthStateChanged(firebaseUser => {
+        if(firebaseUser) {
+          setUserDetails(firebaseUser.providerData);
+        } 
+      })
+    }
+    return () => mounted = false;
+  }, []);
+
+  // const uploadPicture = event => {
+  //   const file = event.target.files[0];
+  //   const user = auth.currentUser;
+  //   user.updateProfile({
+  //     photoURL: file,
+  //   });
+  // }
+  
   const { className, ...rest } = props;
 
   const classes = useStyles();
-
-  const user = {
-    name: 'Shen Zhi',
-    city: 'Los Angeles',
-    country: 'USA',
-    timezone: 'GTM-7',
-    avatar: '/images/avatars/avatar_11.png'
-  };
 
   return (
     <Card
@@ -59,33 +78,19 @@ const AccountProfile = props => {
               gutterBottom
               variant="h2"
             >
-              John Doe
+              {`${userDetails[0].displayName.split(" ")[0]} ${userDetails[0].displayName.split(" ")[1]}`}
             </Typography>
             <Typography
               className={classes.locationText}
               color="textSecondary"
               variant="body1"
             >
-              {user.city}, {user.country}
-            </Typography>
-            <Typography
-              className={classes.dateText}
-              color="textSecondary"
-              variant="body1"
-            >
-              {moment().format('hh:mm A')} ({user.timezone})
+              {userDetails[0].email}
             </Typography>
           </div>
           <Avatar
             className={classes.avatar}
-            src={user.avatar}
-          />
-        </div>
-        <div className={classes.progress}>
-          <Typography variant="body1">Profile Completeness: 70%</Typography>
-          <LinearProgress
-            value={70}
-            variant="determinate"
+            src={userDetails[0].avatar}
           />
         </div>
       </CardContent>
@@ -95,8 +100,13 @@ const AccountProfile = props => {
           className={classes.uploadButton}
           color="primary"
           variant="text"
+          component="label"
         >
           Upload picture
+          {/* <input 
+            type="file" style={{ display: "none" }} 
+            onChange={event => uploadPicture(event)}
+            /> */}
         </Button>
         <Button variant="text">Remove picture</Button>
       </CardActions>

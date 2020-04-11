@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, IconButton, Grid, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, IconButton, Grid, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
-import OpacityIcon from '@material-ui/icons/Opacity';
+import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
+import {auth} from '../../../../shared/firebaseAuth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,11 +30,37 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Topbar = props => {
+  // console.log('[Topbar]: ', auth.currentUser);
   const { className, onSidebarOpen, ...rest } = props;
 
   const classes = useStyles();
 
-  const [notifications] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  let logOutButton = null;
+  if(isAuthenticated) {
+    logOutButton = <IconButton
+                    className={classes.signOutButton}
+                    color="inherit"
+                    onClick={() => auth.signOut()}
+                  >
+                  <InputIcon />
+                  </IconButton>
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
+        if(firebaseUser) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      }
+    });
+    return () => mounted = false;
+  });
 
   return (
     <AppBar
@@ -45,7 +71,7 @@ const Topbar = props => {
         <RouterLink to="/">
           <Grid container spacing={1} justify="flex-start" alignItems="center">
             <Grid item>
-              <OpacityIcon className={classes.logo}/>
+              <ArrowDropDownCircleIcon className={classes.logo}/>
             </Grid>
             <Grid item>
               <Typography className={classes.dropMini} variant="h1">
@@ -56,21 +82,7 @@ const Topbar = props => {
         </RouterLink>
         <div className={classes.flexGrow} />
         <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge
-              badgeContent={notifications.length}
-              color="primary"
-              variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton
-            className={classes.signOutButton}
-            color="inherit"
-          >
-            <InputIcon />
-          </IconButton>
+          {logOutButton}
         </Hidden>
         <Hidden lgUp>
           <IconButton

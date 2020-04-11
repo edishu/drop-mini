@@ -1,18 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import FolderIcon from '@material-ui/icons/Folder';
 import TextFieldsIcon from '@material-ui/icons/TextFields';
-import ImageIcon from '@material-ui/icons/Image';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import SettingsIcon from '@material-ui/icons/Settings';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from '@material-ui/icons/Lock';
+import {auth} from '../../../../shared/firebaseAuth';
 
-import { Profile, SidebarNav, UpgradePlan } from './components';
+import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -38,52 +36,70 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
+  // console.log('[Sidebar]: ', auth.currentUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { open, variant, onClose, className, ...rest } = props;
 
   const classes = useStyles();
 
-  const pages = [
+  let pages = [
     {
-      title: 'Products',
+      title: 'Files',
       href: '/products',
-      icon: <ShoppingBasketIcon />
+      icon: <FolderIcon />
     },
     {
-      title: 'Account',
-      href: '/account',
-      icon: <AccountBoxIcon />
-    },
-    {
-      title: 'Settings',
-      href: '/settings',
-      icon: <SettingsIcon />
-    },
-    {
-      title: 'Authentication',
+      title: 'Log-In/Sign-Up',
       href: '/sign-in',
       icon: <LockOpenIcon />
-    },
-    {
-      title: 'Dashboard',
-      href: '/dashboard',
-      icon: <DashboardIcon />
-    },
-    {
-      title: 'Users',
-      href: '/users',
-      icon: <PeopleIcon />
-    },
+    }
+    ,
     {
       title: 'Typography',
       href: '/typography',
       icon: <TextFieldsIcon />
-    },
-    {
-      title: 'Icons',
-      href: '/icons',
-      icon: <ImageIcon />
-    },    
+    },   
   ];
+
+  if(isAuthenticated) {
+    pages = [
+      {
+        title: 'Files',
+        href: '/products',
+        icon: <FolderIcon />
+      },
+      {
+        title: 'Account',
+        href: '/account',
+        icon: <AccountBoxIcon />
+      },
+      {
+        title: 'Log-Out',
+        href: '/sign-out',
+        icon: <LockIcon />
+      }
+      ,
+      {
+        title: 'Typography',
+        href: '/typography',
+        icon: <TextFieldsIcon />
+      },   
+    ];
+  }
+  
+  useEffect(() => {
+    let mounted = true;
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
+        if(firebaseUser) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      }
+    });
+    return () => mounted = false;
+  });
 
   return (
     <Drawer

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -13,22 +13,51 @@ import {
   TextField
 } from '@material-ui/core';
 
+import {auth} from '../../../../shared/firebaseAuth';
+
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
 const AccountDetails = props => {
+
+  const [userDetails, setUserDetails] = useState(null);
+  
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+        auth.onAuthStateChanged(firebaseUser => {
+        if(firebaseUser) {
+          setUserDetails(firebaseUser.providerData);
+        } 
+      })
+    }
+    return () => mounted = false;
+  }, []);
+
+
+  useEffect(() => {
+    let mounted = true;
+    if (mounted && userDetails) {
+      setValues({
+        firstName: userDetails[0].displayName.split(" ")[0],
+        lastName: userDetails[0].displayName.split(" ")[1],
+        email: userDetails[0].email,
+        phone: userDetails[0].phoneNumber ? userDetails[0].phoneNumber : '',
+      });
+    }
+    return () => mounted = false;
+  }, [userDetails]);
+
   const { className, ...rest } = props;
 
   const classes = useStyles();
 
   const [values, setValues] = useState({
-    firstName: 'Shen',
-    lastName: 'Zhi',
-    email: 'shen.zhi@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
+    firstName: 'Dummy',
+    lastName: 'User',
+    email: 'dummy.user@email.com',
+    phone: '123-456-7890',
   });
 
   const handleChange = event => {
@@ -38,20 +67,12 @@ const AccountDetails = props => {
     });
   };
 
-  const states = [
-    {
-      value: 'alabama',
-      label: 'Alabama'
-    },
-    {
-      value: 'new-york',
-      label: 'New York'
-    },
-    {
-      value: 'san-francisco',
-      label: 'San Francisco'
-    }
-  ];
+  const onUpdateHandler = () => {
+    const user = auth.currentUser;
+    user.updateProfile({
+      displayName: `${values.firstName} ${values.lastName}`,
+    });
+  };
 
   return (
     <Card
@@ -63,7 +84,6 @@ const AccountDetails = props => {
         noValidate
       >
         <CardHeader
-          subheader="The information can be edited"
           title="Profile"
         />
         <Divider />
@@ -79,7 +99,6 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                helperText="Please specify the first name"
                 label="First name"
                 margin="dense"
                 name="firstName"
@@ -105,82 +124,6 @@ const AccountDetails = props => {
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Email Address"
-                margin="dense"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Phone Number"
-                margin="dense"
-                name="phone"
-                onChange={handleChange}
-                type="number"
-                value={values.phone}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Select State"
-                margin="dense"
-                name="state"
-                onChange={handleChange}
-                required
-                select
-                // eslint-disable-next-line react/jsx-sort-props
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map(option => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Country"
-                margin="dense"
-                name="country"
-                onChange={handleChange}
-                required
-                value={values.country}
-                variant="outlined"
-              />
-            </Grid>
           </Grid>
         </CardContent>
         <Divider />
@@ -188,8 +131,9 @@ const AccountDetails = props => {
           <Button
             color="primary"
             variant="contained"
+            onClick={() => onUpdateHandler()}
           >
-            Save details
+            Update Profile
           </Button>
         </CardActions>
       </form>

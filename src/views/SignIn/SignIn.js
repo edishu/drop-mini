@@ -12,6 +12,7 @@ import {
   Typography
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {auth} from '../../shared/firebaseAuth';
 
 import { Facebook as FacebookIcon, Google as GoogleIcon } from 'icons';
 
@@ -50,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundImage: 'url(/images/auth.jpg)',
+    backgroundImage: 'url(/images/smallBox.jpg)',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center'
@@ -172,7 +173,10 @@ const SignIn = props => {
 
   const handleSignIn = event => {
     event.preventDefault();
-    history.push('/');
+    auth
+    .signInWithEmailAndPassword(formState.values.email, formState.values.password)
+    .then(res => history.push('/'))
+    .catch(err => console.log(err.message));
   };
 
   const hasError = field =>
@@ -195,21 +199,20 @@ const SignIn = props => {
                 className={classes.quoteText}
                 variant="h1"
               >
-                Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                they sold out High Life.
+                Drop-Mini
               </Typography>
               <div className={classes.person}>
                 <Typography
                   className={classes.name}
                   variant="body1"
                 >
-                  Takamaru Ayako
+                  SignIn
                 </Typography>
                 <Typography
                   className={classes.bio}
                   variant="body2"
                 >
-                  Manager at inVision
+                  Page
                 </Typography>
               </div>
             </div>

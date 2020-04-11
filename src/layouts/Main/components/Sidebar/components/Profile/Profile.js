@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Typography } from '@material-ui/core';
+import { auth } from '../../../../../../shared/firebaseAuth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,14 +23,29 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Profile = props => {
+
+  const [userName, setUserName] = useState('');
+  
+  useEffect(() => {
+    let mounted = true;
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
+        if(firebaseUser) {
+          setUserName(firebaseUser.displayName);
+        } else {
+          setUserName('Dummy User');
+        }
+      }
+    });
+    return () => mounted = false;
+  });
+
   const { className, ...rest } = props;
 
   const classes = useStyles();
 
   const user = {
-    name: 'Shen Zhi',
-    avatar: '/images/avatars/avatar_11.png',
-    bio: 'Brain Director'
+    name: userName,
   };
 
   return (
@@ -41,7 +57,7 @@ const Profile = props => {
         alt="Person"
         className={classes.avatar}
         component={RouterLink}
-        src={user.avatar}
+        // src={}
         to="/settings"
       />
       <Typography
@@ -50,7 +66,6 @@ const Profile = props => {
       >
         {user.name}
       </Typography>
-      <Typography variant="body2">{user.bio}</Typography>
     </div>
   );
 };

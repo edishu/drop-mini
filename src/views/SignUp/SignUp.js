@@ -9,11 +9,10 @@ import {
   IconButton,
   TextField,
   Link,
-  FormHelperText,
-  Checkbox,
   Typography
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {auth} from '../../shared/firebaseAuth';
 
 const schema = {
   firstName: {
@@ -41,10 +40,6 @@ const schema = {
       maximum: 128
     }
   },
-  policy: {
-    presence: { allowEmpty: false, message: 'is required' },
-    checked: true
-  }
 };
 
 const useStyles = makeStyles(theme => ({
@@ -66,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundImage: 'url(/images/auth.jpg)',
+    backgroundImage: 'url(/images/smallBox.jpg)',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center'
@@ -141,6 +136,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignUp = props => {
+
   const { history } = props;
 
   const classes = useStyles();
@@ -187,7 +183,15 @@ const SignUp = props => {
 
   const handleSignUp = event => {
     event.preventDefault();
-    history.push('/');
+    auth
+    .createUserWithEmailAndPassword(formState.values.email, formState.values.password)
+    .then(res => {
+      res.user.updateProfile({
+        displayName: `${formState.values.firstName} ${formState.values.lastName}`
+      });
+      history.push('/');
+    })
+    .catch(err => console.log(err.message));
   };
 
   const hasError = field =>
@@ -210,21 +214,20 @@ const SignUp = props => {
                 className={classes.quoteText}
                 variant="h1"
               >
-                Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                they sold out High Life.
+                Drop-Mini
               </Typography>
               <div className={classes.person}>
                 <Typography
                   className={classes.name}
                   variant="body1"
                 >
-                  Takamaru Ayako
+                  SignUp
                 </Typography>
                 <Typography
                   className={classes.bio}
                   variant="body2"
                 >
-                  Manager at inVision
+                  Page
                 </Typography>
               </div>
             </div>
@@ -315,36 +318,6 @@ const SignUp = props => {
                   value={formState.values.password || ''}
                   variant="outlined"
                 />
-                <div className={classes.policy}>
-                  <Checkbox
-                    checked={formState.values.policy || false}
-                    className={classes.policyCheckbox}
-                    color="primary"
-                    name="policy"
-                    onChange={handleChange}
-                  />
-                  <Typography
-                    className={classes.policyText}
-                    color="textSecondary"
-                    variant="body1"
-                  >
-                    I have read the{' '}
-                    <Link
-                      color="primary"
-                      component={RouterLink}
-                      to="#"
-                      underline="always"
-                      variant="h6"
-                    >
-                      Terms and Conditions
-                    </Link>
-                  </Typography>
-                </div>
-                {hasError('policy') && (
-                  <FormHelperText error>
-                    {formState.errors.policy[0]}
-                  </FormHelperText>
-                )}
                 <Button
                   className={classes.signUpButton}
                   color="primary"

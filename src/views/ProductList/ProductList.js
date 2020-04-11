@@ -6,7 +6,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import { ProductsToolbar, ProductCard } from './components';
 import { getFilesList, getMetaFileList } from '../../shared/firebaseStorage';
-import firebase from '../../config/firebase/firebaseInit';
+import { auth } from '../../shared/firebaseAuth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,18 +24,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ProductList = () => {
+
+  
   // State of ProductList component
-  const[filesList, setFilesList] = useState([]);
+  const [userFiles, setUserFiles] = useState("");
+  const [filesList, setFilesList] = useState([]);
   const [filesMetadataList, setFilesMetadataList] = useState([]);
 
+  // Functions
   const getFilesListLocal = (files) => {
     getFilesList(files)
     .then(list => setFilesList(list))
     .catch(err => console.log(err.message));
   }
+
   useEffect(() => {
-    getFilesListLocal("files");
-  }, []);
+    getFilesListLocal(userFiles);
+  }, [userFiles]);
   
   useEffect(() => {
     getMetaFileList(filesList)
@@ -43,11 +48,25 @@ const ProductList = () => {
     .catch(err => console.log(err.message));
   }, [filesList]);
 
+  useEffect(() => {
+    let mounted = true;
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
+        if(firebaseUser) {
+          setUserFiles(firebaseUser.uid);
+        } else {
+          setUserFiles("files");
+        }
+      }
+    });
+    return () => mounted = false;
+  });
+
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <ProductsToolbar pageReload={() => getFilesListLocal("files")} />
+      <ProductsToolbar pageReload={() => getFilesListLocal(userFiles)} />
       <div className={classes.content}>
         <Grid
           container
@@ -63,7 +82,7 @@ const ProductList = () => {
             >
               <ProductCard 
                 product={product}
-                pageRefresh={() => getFilesListLocal("files")}/>
+                pageRefresh={() => getFilesListLocal(userFiles)}/>
             </Grid>
           ))}
         </Grid>
