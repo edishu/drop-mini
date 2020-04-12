@@ -2,10 +2,10 @@ import firebase from '../config/firebase/firebaseInit';
 import { saveAs } from 'file-saver';
 const firebaseStorage = firebase.storage();
 
-export const uploadFile = (event, refresh, loading, loadValue) => {
+export const uploadFile = (event, refresh, loading, loadValue, folder) => {
     loading(true);
     const file = event.target.files[0];
-    const storeageRef = firebaseStorage.ref(`files/${file.name}`);
+    const storeageRef = firebaseStorage.ref(`${folder}/${file.name}`);
     const task = storeageRef.put(file);
     task.on('state_changed', 
         function progress(snapshot) {
@@ -26,17 +26,30 @@ export const uploadFile = (event, refresh, loading, loadValue) => {
     );
 }
 
-export const getFilesList = async (directory) => {  
+export const getFilesList = async (directory, page) => {  
+    page = page < 0 ? 0 : page;
     const filesRef = firebaseStorage.ref(directory);
     try {
-        const filesObj = await filesRef.listAll();
-        const files = filesObj.items;
-        return files;
+        let filesObj = await filesRef.list({ maxResults: 6});
+        for (let i=1; i<=page; i++) {
+            if(filesObj.nextPageToken) {
+            filesObj = await filesRef.list({
+                maxResults: 6,
+                pageToken: filesObj.nextPageToken,
+              });
+            } else {
+                page -= 1;
+                break;
+            }
+        }
+        return [filesObj, page];
     } catch (err) {
         console.log("[Error in function getFilesList]: ", err.message);
         return err;
     }
 }
+
+ 
 
 export const geFileMetadata = async (file) => {
     try {

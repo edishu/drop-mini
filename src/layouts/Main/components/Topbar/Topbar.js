@@ -3,10 +3,9 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Hidden, IconButton, Grid, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, IconButton, Grid, Typography, Avatar, Tooltip  } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import {auth} from '../../../../shared/firebaseAuth';
 
 const useStyles = makeStyles(theme => ({
@@ -39,13 +38,15 @@ const Topbar = props => {
 
   let logOutButton = null;
   if(isAuthenticated) {
-    logOutButton = <IconButton
-                    className={classes.signOutButton}
-                    color="inherit"
-                    onClick={() => auth.signOut()}
-                  >
-                  <InputIcon />
-                  </IconButton>
+    logOutButton = <Tooltip title="Log-Out" placement="bottom-start">
+                      <IconButton
+                        className={classes.signOutButton}
+                        color="inherit"
+                        onClick={() => auth.signOut()}
+                      >
+                      <InputIcon />
+                    </IconButton>
+                  </Tooltip>
   }
 
   useEffect(() => {
@@ -69,9 +70,11 @@ const Topbar = props => {
     >
       <Toolbar>
         <RouterLink to="/">
-          <Grid container spacing={1} justify="flex-start" alignItems="center">
+          <Grid container spacing={2} justify="flex-start" alignItems="center">
             <Grid item>
-              <ArrowDropDownCircleIcon className={classes.logo}/>
+              <Avatar
+              variant="rounded"
+              src="/images/shopping-bag.png"/>
             </Grid>
             <Grid item>
               <Typography className={classes.dropMini} variant="h1">

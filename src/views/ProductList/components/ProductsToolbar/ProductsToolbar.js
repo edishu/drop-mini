@@ -53,10 +53,10 @@ const ProductsToolbar = props => {
       className={clsx(classes.root, className)}
     >
       <div className={classes.row}>
-        <SearchInput
+        {/* <SearchInput
           className={classes.searchInput}
           placeholder="Search File"
-        />
+        /> */}
         <span className={classes.spacer} />
         <div className={clsx(classes.progress, (loading ? null : classes.ifNotLoading))}>
           <Typography variant="body1" className={classes.uploading}>Uploading...</Typography>
@@ -69,7 +69,7 @@ const ProductsToolbar = props => {
             Upload
           <input type="file" style={{ display: "none" }} 
             onChange={event => {
-              uploadFile(event, props.pageReload, setLoading, setLoadValue);
+              uploadFile(event, props.pageReload, setLoading, setLoadValue, props.firebaseFolder);
               }}/>
         </Button>
       </div>

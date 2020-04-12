@@ -194,7 +194,7 @@ const SignIn = props => {
           lg={5}
         >
           <div className={classes.quote}>
-            <div className={classes.quoteInner}>
+            {/* <div className={classes.quoteInner}>
               <Typography
                 className={classes.quoteText}
                 variant="h1"
@@ -215,7 +215,7 @@ const SignIn = props => {
                   Page
                 </Typography>
               </div>
-            </div>
+            </div> */}
           </div>
         </Grid>
         <Grid
@@ -238,10 +238,11 @@ const SignIn = props => {
                 <Typography
                   className={classes.title}
                   variant="h2"
+                  
                 >
                   Sign in
                 </Typography>
-                <Typography
+                {/* <Typography
                   color="textSecondary"
                   gutterBottom
                 >
@@ -281,7 +282,7 @@ const SignIn = props => {
                   variant="body1"
                 >
                   or login with email address
-                </Typography>
+                </Typography> */}
                 <TextField
                   className={classes.textField}
                   error={hasError('email')}

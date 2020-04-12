@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
 const Profile = props => {
 
   const [userName, setUserName] = useState('');
+  const [userImage, setUserImage] = useState('');
   
   useEffect(() => {
     let mounted = true;
@@ -32,8 +33,10 @@ const Profile = props => {
       if(mounted) {
         if(firebaseUser) {
           setUserName(firebaseUser.displayName);
+          setUserImage('');
         } else {
-          setUserName('Dummy User');
+          setUserName('Test User');
+          setUserImage('/images/avatars/avatar_3.png');
         }
       }
     });
@@ -57,7 +60,7 @@ const Profile = props => {
         alt="Person"
         className={classes.avatar}
         component={RouterLink}
-        // src={}
+        src={userImage}
         to="/settings"
       />
       <Typography

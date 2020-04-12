@@ -52,13 +52,7 @@ const Sidebar = props => {
       title: 'Log-In/Sign-Up',
       href: '/sign-in',
       icon: <LockOpenIcon />
-    }
-    ,
-    {
-      title: 'Typography',
-      href: '/typography',
-      icon: <TextFieldsIcon />
-    },   
+    }, 
   ];
 
   if(isAuthenticated) {
@@ -77,13 +71,7 @@ const Sidebar = props => {
         title: 'Log-Out',
         href: '/sign-out',
         icon: <LockIcon />
-      }
-      ,
-      {
-        title: 'Typography',
-        href: '/typography',
-        icon: <TextFieldsIcon />
-      },   
+      },    
     ];
   }
   
