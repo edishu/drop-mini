@@ -26,6 +26,7 @@ const Profile = props => {
 
   const [userName, setUserName] = useState('');
   const [userImage, setUserImage] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   useEffect(() => {
     let mounted = true;
@@ -34,9 +35,11 @@ const Profile = props => {
         if(firebaseUser) {
           setUserName(firebaseUser.displayName);
           setUserImage('');
+          setIsAuthenticated(true);
         } else {
           setUserName('Test User');
           setUserImage('/images/avatars/avatar_3.png');
+          setIsAuthenticated(false);
         }
       }
     });
@@ -61,7 +64,7 @@ const Profile = props => {
         className={classes.avatar}
         component={RouterLink}
         src={userImage}
-        to="/settings"
+        to={isAuthenticated ? "/account" : "/"}
       />
       <Typography
         className={classes.name}

@@ -44,19 +44,17 @@ export const getFilesList = async (directory, page) => {
         }
         return [filesObj, page];
     } catch (err) {
-        console.log("[Error in function getFilesList]: ", err.message);
+        // console.log("[Error in function getFilesList]: ", err.message);
         return err;
     }
 }
-
- 
 
 export const geFileMetadata = async (file) => {
     try {
         const fileMeta = await file.getMetadata();
         return fileMeta;
     } catch (err) {
-        console.log("[Error in function geFileMetadata]: ", err.message);
+        // console.log("[Error in function geFileMetadata]: ", err.message);
         return err;
     }
 }
@@ -66,7 +64,7 @@ export const getMetaFileList = async (filesList) => {
         const filesMetadataList = await Promise.all(filesList.map(fl => geFileMetadata(fl).then(res => res)));
         return filesMetadataList;
     } catch (err) {
-        console.log("[Error in function getMetaFileList]: ", err.message);
+        // console.log("[Error in function getMetaFileList]: ", err.message);
         return err;
     }
 }
@@ -76,7 +74,7 @@ export const deleteFile = async (filePath) => {
         await firebaseStorage.ref(filePath).delete()
         return `File "${filePath}" deleted successfull!`;
     } catch (err) {
-        console.log("[Error in function deleteFile]: ", err.message);
+        // console.log("[Error in function deleteFile]: ", err.message);
         return err;
     }
 }
@@ -94,7 +92,7 @@ export const downloadFile = async (filePath) => {
         xhr.send();
         return `File "${filePath}" downloaded started.`;
     } catch (err) {
-        console.log("[Error in function downloadFile]: ", err.message);
+        // console.log("[Error in function downloadFile]: ", err.message);
         return err;
     }
 }

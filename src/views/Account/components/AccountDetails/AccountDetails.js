@@ -22,43 +22,40 @@ const useStyles = makeStyles(() => ({
 const AccountDetails = props => {
 
   const [userDetails, setUserDetails] = useState(null);
-  
+  const [values, setValues] = useState({
+    firstName: 'Test',
+    lastName: 'User',
+    email: 'test.user@email.com',
+    phone: '123-456-7890',
+  });
+
   useEffect(() => {
     let mounted = true;
-    if (mounted) {
-        auth.onAuthStateChanged(firebaseUser => {
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
         if(firebaseUser) {
-          setUserDetails(firebaseUser.providerData);
-        } 
-      })
-    }
+          setValues({
+            firstName: firebaseUser.providerData[0].displayName.split(" ")[0],
+            lastName: firebaseUser.providerData[0].displayName.split(" ")[1],
+            email: firebaseUser.providerData[0].email,
+            phone: firebaseUser.providerData[0].phoneNumber ? firebaseUser.providerData[0].phoneNumber : '',
+          });
+        } else {
+          setValues({
+            firstName: 'Test',
+            lastName: 'User',
+            email: 'test.user@email.com',
+            phone: '123-456-7890',
+          });
+        }
+      }
+    });
     return () => mounted = false;
-  }, []);
-
-
-  useEffect(() => {
-    let mounted = true;
-    if (mounted && userDetails) {
-      setValues({
-        firstName: userDetails[0].displayName.split(" ")[0],
-        lastName: userDetails[0].displayName.split(" ")[1],
-        email: userDetails[0].email,
-        phone: userDetails[0].phoneNumber ? userDetails[0].phoneNumber : '',
-      });
-    }
-    return () => mounted = false;
-  }, [userDetails]);
-
+  });
+ 
   const { className, ...rest } = props;
 
   const classes = useStyles();
-
-  const [values, setValues] = useState({
-    firstName: 'Dummy',
-    lastName: 'User',
-    email: 'dummy.user@email.com',
-    phone: '123-456-7890',
-  });
 
   const handleChange = event => {
     setValues({

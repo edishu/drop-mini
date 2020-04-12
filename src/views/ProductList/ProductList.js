@@ -7,6 +7,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { ProductsToolbar, ProductCard } from './components';
 import { getFilesList, getMetaFileList } from '../../shared/firebaseStorage';
 import { auth } from '../../shared/firebaseAuth';
+import CustomSnackbar from '../../components/CustomSnackbar/CustomSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,6 +34,7 @@ const ProductList = () => {
   const [filesList, setFilesList] = useState([]);
   const [nextAvailable, setNextAvailable] = useState(true);
   const [filesMetadataList, setFilesMetadataList] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Functions
   const getFilesListLocal = (files, pageNum) => {
@@ -46,7 +48,7 @@ const ProductList = () => {
       }
       setPage(list[1]);
     })
-    .catch(err => console.log(err.message));
+    .catch(err => setErrorMessage(err.message));
   }
 
   useEffect(() => {
@@ -56,7 +58,7 @@ const ProductList = () => {
   useEffect(() => {
     getMetaFileList(filesList)
     .then(metaList => setFilesMetadataList(metaList))
-    .catch(err => console.log(err.message));
+    .catch(err => setErrorMessage(err.message));
   }, [filesList]);
 
   useEffect(() => {
@@ -77,6 +79,9 @@ const ProductList = () => {
 
   return (
     <div className={classes.root}>
+      <CustomSnackbar
+      errMsg={errorMessage}
+      />
       <ProductsToolbar 
       pageReload={() => getFilesListLocal(userFiles, currentPage)} 
       firebaseFolder = {userFiles}

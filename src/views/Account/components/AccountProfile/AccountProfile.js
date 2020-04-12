@@ -42,25 +42,24 @@ const AccountProfile = props => {
     avatar: null
   }]);
 
+
   useEffect(() => {
     let mounted = true;
-    if (mounted) {
-        auth.onAuthStateChanged(firebaseUser => {
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
         if(firebaseUser) {
           setUserDetails(firebaseUser.providerData);
-        } 
-      })
-    }
+        } else {
+          setUserDetails([{
+            displayName: 'Dummy User',
+            email: 'dummy.user@email.com',
+            avatar: null
+          }]);
+        }
+      }
+    });
     return () => mounted = false;
-  }, []);
-
-  // const uploadPicture = event => {
-  //   const file = event.target.files[0];
-  //   const user = auth.currentUser;
-  //   user.updateProfile({
-  //     photoURL: file,
-  //   });
-  // }
+  });
   
   const { className, ...rest } = props;
 

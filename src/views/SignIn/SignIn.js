@@ -9,10 +9,11 @@ import {
   IconButton,
   TextField,
   Link,
-  Typography
+  Typography, 
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {auth} from '../../shared/firebaseAuth';
+import CustomSnackbar from '../../components/CustomSnackbar/CustomSnackbar'
 
 import { Facebook as FacebookIcon, Google as GoogleIcon } from 'icons';
 
@@ -137,6 +138,7 @@ const SignIn = props => {
     touched: {},
     errors: {}
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
@@ -176,7 +178,7 @@ const SignIn = props => {
     auth
     .signInWithEmailAndPassword(formState.values.email, formState.values.password)
     .then(res => history.push('/'))
-    .catch(err => console.log(err.message));
+    .catch(err => setErrorMessage(err.message));
   };
 
   const hasError = field =>
@@ -184,6 +186,9 @@ const SignIn = props => {
 
   return (
     <div className={classes.root}>
+      <CustomSnackbar
+      errMsg={errorMessage}
+      />
       <Grid
         className={classes.grid}
         container
@@ -194,29 +199,8 @@ const SignIn = props => {
           lg={5}
         >
           <div className={classes.quote}>
-            {/* <div className={classes.quoteInner}>
-              <Typography
-                className={classes.quoteText}
-                variant="h1"
-              >
-                Drop-Mini
-              </Typography>
-              <div className={classes.person}>
-                <Typography
-                  className={classes.name}
-                  variant="body1"
-                >
-                  SignIn
-                </Typography>
-                <Typography
-                  className={classes.bio}
-                  variant="body2"
-                >
-                  Page
-                </Typography>
-              </div>
-            </div> */}
           </div>
+
         </Grid>
         <Grid
           className={classes.content}

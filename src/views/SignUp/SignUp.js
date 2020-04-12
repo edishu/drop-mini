@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {auth} from '../../shared/firebaseAuth';
+import CustomSnackbar from '../../components/CustomSnackbar/CustomSnackbar'
 
 const schema = {
   firstName: {
@@ -147,6 +148,7 @@ const SignUp = props => {
     touched: {},
     errors: {}
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
@@ -191,7 +193,7 @@ const SignUp = props => {
       });
       history.push('/');
     })
-    .catch(err => console.log(err.message));
+    .catch(err => setErrorMessage(err.message));
   };
 
   const hasError = field =>
@@ -199,6 +201,9 @@ const SignUp = props => {
 
   return (
     <div className={classes.root}>
+      <CustomSnackbar
+      errMsg={errorMessage}
+      />
       <Grid
         className={classes.grid}
         container
@@ -209,28 +214,7 @@ const SignUp = props => {
           lg={5}
         >
           <div className={classes.quote}>
-            {/* <div className={classes.quoteInner}>
-              <Typography
-                className={classes.quoteText}
-                variant="h1"
-              >
-                Drop-Mini
-              </Typography>
-              <div className={classes.person}>
-                <Typography
-                  className={classes.name}
-                  variant="body1"
-                >
-                  SignUp
-                </Typography>
-                <Typography
-                  className={classes.bio}
-                  variant="body2"
-                >
-                  Page
-                </Typography>
-              </div>
-            </div> */}
+            {/* Left Side */}
           </div>
         </Grid>
         <Grid
