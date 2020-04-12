@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Topbar = props => {
-  // console.log('[Topbar]: ', auth.currentUser);
+
   const { className, onSidebarOpen, ...rest } = props;
 
   const classes = useStyles();

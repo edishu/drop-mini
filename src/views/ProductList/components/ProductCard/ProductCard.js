@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -21,6 +21,7 @@ import filesize from 'filesize';
 import Modal from '@material-ui/core/Modal';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { deleteFile, downloadFile } from '../../../../shared/firebaseStorage';
+import {auth} from  '../../../../shared/firebaseAuth';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -80,6 +81,7 @@ const ProductCard = props => {
   const classes = useStyles();
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   let icon;
   switch (product.contentType.split("/")[0]) {
@@ -98,6 +100,44 @@ const ProductCard = props => {
   const handleModalClose = () => {
     setModalOpen(false);
   };
+
+  let del = null;
+
+  if (isAuthenticated) {
+    del = <Grid
+          className={clsx(classes.statsItem, (modalOpen ? null : classes.modalOff))}
+          item>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => {
+                deleteFile(product.fullPath)
+                .then(res => {
+                pageRefresh(); 
+                handleModalClose();
+              })
+            }}
+            className={classes.deleteButton}
+            >
+            <DeleteIcon className={clsx(classes.statsIcon, classes.icon)}/>
+            Delete
+            </Button>
+            </Grid>
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    auth.onAuthStateChanged(firebaseUser => {
+      if(mounted) {
+        if(firebaseUser) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      }
+    });
+    return () => mounted = false;
+  });
 
   const cardContents = (<div> 
                   <CardContent >
@@ -151,28 +191,7 @@ const ProductCard = props => {
                           Download
                         </Button>
                       </Grid>
-                      <Grid
-                        className={clsx(classes.statsItem, (modalOpen ? null : classes.modalOff))}
-                        item
-                      >
-                        <Button 
-                          variant="contained" 
-                          color="primary"
-                          onClick={() => {
-                            deleteFile(product.fullPath)
-                            .then(res => {
-                              pageRefresh(); 
-                              console.log(res);
-                              handleModalClose();
-                            })
-                            .catch(err => console.log(err.message))
-                          }}
-                          className={classes.deleteButton}
-                          >
-                          <DeleteIcon className={clsx(classes.statsIcon, classes.icon)}/>
-                          Delete
-                        </Button>
-                      </Grid>
+                      {del}
                       <Grid
                         className={classes.statsItem}
                         item

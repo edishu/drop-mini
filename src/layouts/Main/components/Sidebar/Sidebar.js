@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  // console.log('[Sidebar]: ', auth.currentUser);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { open, variant, onClose, className, ...rest } = props;
 

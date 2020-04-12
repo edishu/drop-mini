@@ -27,34 +27,10 @@ const Routes = () => {
         to="/products"
       />
       <RouteWithLayout
-        component={DashboardView}
-        exact
-        layout={MainLayout}
-        path="/dashboard"
-      />
-      <RouteWithLayout
-        component={UserListView}
-        exact
-        layout={MainLayout}
-        path="/users"
-      />
-      <RouteWithLayout
         component={ProductListView}
         exact
         layout={MainLayout}
         path="/products"
-      />
-      <RouteWithLayout
-        component={TypographyView}
-        exact
-        layout={MainLayout}
-        path="/typography"
-      />
-      <RouteWithLayout
-        component={IconsView}
-        exact
-        layout={MainLayout}
-        path="/icons"
       />
       <RouteWithLayout
         component={AccountView}
@@ -62,12 +38,7 @@ const Routes = () => {
         layout={MainLayout}
         path="/account"
       />
-      <RouteWithLayout
-        component={SettingsView}
-        exact
-        layout={MainLayout}
-        path="/settings"
-      />
+
       <RouteWithLayout
         component={SignUpView}
         exact
@@ -86,14 +57,7 @@ const Routes = () => {
         layout={MinimalLayout}
         path="/sign-out"
       />
-      <RouteWithLayout
-        component={NotFoundView}
-        exact
-        layout={MinimalLayout}
-        path="/not-found"
-      />
-      
-      <Redirect to="/not-found" />
+      <Redirect to="/" />
     </Switch>
   );
 };

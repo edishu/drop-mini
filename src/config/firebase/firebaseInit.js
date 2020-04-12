@@ -3,14 +3,14 @@ import "firebase/storage";
 import "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvBqSxHlJ-TDvyJu_Eqc7R-PyoIPXpMoA",
-  authDomain: "drop-mini-dev.firebaseapp.com",
-  databaseURL: "https://drop-mini-dev.firebaseio.com",
-  projectId: "drop-mini-dev",
-  storageBucket: "drop-mini-dev.appspot.com",
-  messagingSenderId: "904747922032",
-  appId: "1:904747922032:web:c38e7b5248f8a3201c3ab5",
-  measurementId: "G-H4YRVWNF2Y"
+  apiKey: "AIzaSyCmh7CQSPDdxp72cid1WkyBuPPaRussGmI",
+  authDomain: "drop-mini.firebaseapp.com",
+  databaseURL: "https://drop-mini.firebaseio.com",
+  projectId: "drop-mini",
+  storageBucket: "drop-mini.appspot.com",
+  messagingSenderId: "576133109419",
+  appId: "1:576133109419:web:fabc913025a17c6b07c9ee",
+  measurementId: "G-QY2L691DPP"
 };
 
 firebase.initializeApp(firebaseConfig);

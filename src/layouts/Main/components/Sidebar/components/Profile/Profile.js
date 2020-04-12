@@ -50,10 +50,6 @@ const Profile = props => {
 
   const classes = useStyles();
 
-  const user = {
-    name: userName,
-  };
-
   return (
     <div
       {...rest}
@@ -70,7 +66,7 @@ const Profile = props => {
         className={classes.name}
         variant="h4"
       >
-        {user.name}
+        {userName}
       </Typography>
     </div>
   );
