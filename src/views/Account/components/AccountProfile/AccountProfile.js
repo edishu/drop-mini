@@ -95,19 +95,19 @@ const AccountProfile = props => {
       </CardContent>
       <Divider />
       <CardActions>
-        <Button
+        {/* <Button
           className={classes.uploadButton}
           color="primary"
           variant="text"
           component="label"
         >
           Upload picture
-          {/* <input 
+          <input 
             type="file" style={{ display: "none" }} 
             onChange={event => uploadPicture(event)}
-            /> */}
+            />
         </Button>
-        <Button variant="text">Remove picture</Button>
+        <Button variant="text">Remove picture</Button> */}
       </CardActions>
     </Card>
   );

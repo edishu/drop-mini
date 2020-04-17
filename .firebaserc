@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "drop-mini-dev"
+    "default": "drop-mini-dev",
+    "production": "drop-mini"
   }
 }

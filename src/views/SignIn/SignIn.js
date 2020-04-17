@@ -12,7 +12,7 @@ import {
   Typography, 
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import {auth} from '../../shared/firebaseAuth';
+import {auth, googleAuth, fbAuth} from '../../shared/firebaseAuth';
 import CustomSnackbar from '../../components/CustomSnackbar/CustomSnackbar'
 
 import { Facebook as FacebookIcon, Google as GoogleIcon } from 'icons';
@@ -124,7 +124,10 @@ const useStyles = makeStyles(theme => ({
   },
   signInButton: {
     margin: theme.spacing(2, 0)
-  }
+  },
+  googleButton: {
+    backgroundColor: "#F4B400",
+  },
 }));
 
 const SignIn = props => {
@@ -181,6 +184,13 @@ const SignIn = props => {
     .catch(err => setErrorMessage(err.message));
   };
 
+  const googleFBSignIn = vendor  => {
+    const authenticator = vendor === 'facebook' ? fbAuth : googleAuth
+    auth.signInWithPopup(authenticator)
+    .then(res => history.push('/'))
+    .catch(err => setErrorMessage(err.message));
+  }
+
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
 
@@ -226,7 +236,7 @@ const SignIn = props => {
                 >
                   Sign in
                 </Typography>
-                {/* <Typography
+                <Typography
                   color="textSecondary"
                   gutterBottom
                 >
@@ -239,8 +249,19 @@ const SignIn = props => {
                 >
                   <Grid item>
                     <Button
+                      onClick={() => googleFBSignIn('google')}
+                      size="large"
+                      variant="contained"
+                      className={classes.googleButton}
+                    >
+                      <GoogleIcon className={classes.socialIcon} />
+                      Login with Google
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
                       color="primary"
-                      onClick={handleSignIn}
+                      onClick={() => googleFBSignIn('facebook')}
                       size="large"
                       variant="contained"
                     >
@@ -248,16 +269,7 @@ const SignIn = props => {
                       Login with Facebook
                     </Button>
                   </Grid>
-                  <Grid item>
-                    <Button
-                      onClick={handleSignIn}
-                      size="large"
-                      variant="contained"
-                    >
-                      <GoogleIcon className={classes.socialIcon} />
-                      Login with Google
-                    </Button>
-                  </Grid>
+                  
                 </Grid>
                 <Typography
                   align="center"
@@ -266,7 +278,7 @@ const SignIn = props => {
                   variant="body1"
                 >
                   or login with email address
-                </Typography> */}
+                </Typography>
                 <TextField
                   className={classes.textField}
                   error={hasError('email')}
